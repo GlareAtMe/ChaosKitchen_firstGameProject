@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameInput gameInput;
     [SerializeField] private SettingsUI settingsUI;
+    [SerializeField] private GameOverUI gameOverUI;
 
     public static GameManager Instance { get; private set; }
 
@@ -25,7 +27,7 @@ public class GameManager : MonoBehaviour
     private State state;
     private float countdownToStartTimer = 3f;
     private float gamePlayingTimer;
-    private float gamePlayingTimerMax = 60f;
+    private float gamePlayingTimerMax = 6f;
     private bool isGamePaused = false;
 
     private void Awake() {
@@ -36,6 +38,11 @@ public class GameManager : MonoBehaviour
     private void Start() {
         gameInput.OnPauseAction += GameInput_OnPauseAction;
         gameInput.OnInteractAction += GameInput_OnInteractAction;
+        gameOverUI.OnRestartGame += GameOverUI_OnRestartGame;
+    }
+
+    private void GameOverUI_OnRestartGame(object sender, EventArgs e) {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     private void GameInput_OnInteractAction(object sender, EventArgs e) {
@@ -108,4 +115,5 @@ public class GameManager : MonoBehaviour
             OnGameUnpaused?.Invoke(this, EventArgs.Empty);
         }
     }
+
 }
