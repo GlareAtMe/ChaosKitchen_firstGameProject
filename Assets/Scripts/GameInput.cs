@@ -49,7 +49,7 @@ public class GameInput : MonoBehaviour
         playerInputActions.Player.Interact.performed -= Interact_performed;
         playerInputActions.Player.AlternativeAction.performed -= AlternativeAction_performed;
         playerInputActions.Player.Pause.performed -= Pause_performed;
-
+        playerInputActions.Player.Disable();
         playerInputActions.Dispose();
     }
 
