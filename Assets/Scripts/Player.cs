@@ -1,18 +1,21 @@
 using System;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Player : MonoBehaviour, IKitchenObjectParrent  
+public class Player : NetworkBehaviour, IKitchenObjectParrent
 {
-    public static Player Instance { get; private set; }
+    //public static Player Instance { get; private set; }
 
     public event EventHandler OnPickupKitchenObject;
     public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
-    public class OnSelectedCounterChangedEventArgs : EventArgs {
+
+    public class OnSelectedCounterChangedEventArgs : EventArgs
+    {
         public BaseCounter selectedClearCounter;
     }
 
-    [SerializeField] private GameInput gameInput;
+    //[SerializeField] private GameInput gameInput;
     [SerializeField] private LayerMask countersLayerMask;
     [SerializeField] private Transform kitchenObjectHoldPoint;
 
@@ -24,17 +27,12 @@ public class Player : MonoBehaviour, IKitchenObjectParrent
 
 
     private void Awake() {
-
-        if (Instance != null) {
-            Debug.LogError("There is more then one player instance");
-        }
-
-        Instance = this;
+        //Instance = this;
     }
 
     private void Start() {
-        gameInput.OnInteractAction += GameInput_OnInteractAction;
-        gameInput.OnAlternatInteractionAction += GameInput_OnAlternatInteractionAction;
+        GameInput.Instance.OnInteractAction += GameInput_OnInteractAction;
+        GameInput.Instance.OnAlternatInteractionAction += GameInput_OnAlternatInteractionAction;
     }
 
     private void GameInput_OnAlternatInteractionAction(object sender, EventArgs e) {
@@ -46,10 +44,10 @@ public class Player : MonoBehaviour, IKitchenObjectParrent
     }
 
     private void GameInput_OnInteractAction(object sender, EventArgs e) {
-        if(!GameManager.Instance.IsGamePlaying()) return;
+        if (!GameManager.Instance.IsGamePlaying()) return;
 
 
-        if (selectedCounter != null) { 
+        if (selectedCounter != null) {
             selectedCounter.Interact(this);
         }
     }
@@ -63,7 +61,7 @@ public class Player : MonoBehaviour, IKitchenObjectParrent
 
     private void HandleInteractions() {
         float interactDistance = 2f;
-        Vector2 inputVector = gameInput.GetMovementVectorNormalized();
+        Vector2 inputVector = GameInput.Instance.GetMovementVectorNormalized();
 
         Vector3 moveDiraction = new Vector3(inputVector.x, 0f, inputVector.y);
         if (moveDiraction != Vector3.zero) {
@@ -84,7 +82,7 @@ public class Player : MonoBehaviour, IKitchenObjectParrent
     }
 
     private void HandleMovement() {
-        Vector2 inputVector = gameInput.GetMovementVectorNormalized();
+        Vector2 inputVector = GameInput.Instance.GetMovementVectorNormalized();
 
         Vector3 moveDiraction = new Vector3(inputVector.x, 0f, inputVector.y);
 
@@ -100,7 +98,7 @@ public class Player : MonoBehaviour, IKitchenObjectParrent
 
             //attempt only x movement 
             Vector3 moveDiractionX = new Vector3(moveDiraction.x, 0, 0).normalized;
-            canMove = (moveDiraction.x < -.5f || moveDiraction.x > .5f)  && !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHight, playerRadius, moveDiractionX, moveDistance);
+            canMove = (moveDiraction.x < -.5f || moveDiraction.x > .5f) && !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHight, playerRadius, moveDiractionX, moveDistance);
 
             if (canMove) {
                 //can move only on x
@@ -131,7 +129,7 @@ public class Player : MonoBehaviour, IKitchenObjectParrent
         transform.forward = Vector3.Slerp(transform.forward, moveDiraction, Time.deltaTime * rotateSpeed);
     }
 
-    private void SetSelectedCounter(BaseCounter selectedCounter) { 
+    private void SetSelectedCounter(BaseCounter selectedCounter) {
         this.selectedCounter = selectedCounter;
 
         OnSelectedCounterChanged?.Invoke(this, new OnSelectedCounterChangedEventArgs {

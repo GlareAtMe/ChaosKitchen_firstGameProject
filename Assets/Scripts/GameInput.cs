@@ -1,8 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEditor.Experimental;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -18,6 +14,8 @@ public class GameInput : MonoBehaviour
 
     private PlayerInputActions playerInputActions;
 
+    public static GameInput Instance { get; private set; }
+
     public enum Binding
     {
         MoveUp,
@@ -30,8 +28,9 @@ public class GameInput : MonoBehaviour
         Gamepad_AlterInteract,
     }
 
-
     private void Awake() {
+        Instance = this;
+
         playerInputActions = new PlayerInputActions();
         //need do this after construct object and before enable actionMap
         if (PlayerPrefs.HasKey(PLAYER_PREFS_BINDINGS)) playerInputActions.LoadBindingOverridesFromJson(PlayerPrefs.GetString(PLAYER_PREFS_BINDINGS));

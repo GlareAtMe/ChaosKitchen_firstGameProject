@@ -23,7 +23,7 @@ public class SoundManager : MonoBehaviour
         DeliveryManager.Instance.OnRecipeFailed += DeliveryManager_OnRecipeFailed;
         DeliveryManager.Instance.OnRecipeSuccess += DeliveryManager_OnRecipeSuccess;
         CuttingCounter.OnAnyCut += CuttingCounter_OnAnyCut;
-        Player.Instance.OnPickupKitchenObject += Player_OnPickupKitchenObject;
+        //Player.Instance.OnPickupKitchenObject += Player_OnPickupKitchenObject;
         BaseCounter.OnPlasedKitchenObject += BaseCounter_OnPlasedKitchenObject;
         TrashCounter.OnAnyObjectTrashed += TrashCounter_OnAnyObjectTrashed;
 
@@ -66,7 +66,7 @@ public class SoundManager : MonoBehaviour
     }
 
     private void Player_OnPickupKitchenObject(object sender, System.EventArgs e) {
-        PlaySound(soundsClipsSO.objectPickup, Player.Instance.transform.position);
+        //PlaySound(soundsClipsSO.objectPickup, Player.Instance.transform.position);
     }
 
     private void CuttingCounter_OnAnyCut(object sender, System.EventArgs e) {
@@ -84,7 +84,7 @@ public class SoundManager : MonoBehaviour
     }
 
     public void FootStepSound(Vector3 position, float volume) {
-        PlaySound(soundsClipsSO.footSteps, position, volume);
+        //PlaySound(soundsClipsSO.footSteps, position, volume);
     }
 
     public void PlayCountdownSound() {
