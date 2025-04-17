@@ -1,14 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 
-public class DeliveryManager : MonoBehaviour
+public class DeliveryManager : NetworkBehaviour
 {
     public static DeliveryManager Instance { get; private set; }
-    
-    
+
+
     [SerializeField] private bool test;
 
     [SerializeField] private ListOfRecipeSO listOfRecipeSO;
@@ -20,7 +20,7 @@ public class DeliveryManager : MonoBehaviour
 
     private float spawnTime = 5f; // Час між спавнами
     private int maxRecipes = 3; // Максимальна кількість рецептів
-    private float spawnRecipeTimer;
+    private float spawnRecipeTimer = 3f;
     private int successfulRecipesAmount;
 
 
@@ -35,23 +35,33 @@ public class DeliveryManager : MonoBehaviour
     private void Start() {
         if (test) {
             StartSpawningRecipes();
-        } 
+        }
 
     }
 
     private void Update() {
+
+        if (!IsServer) { return; }
+
         if (!test) {
             spawnRecipeTimer -= Time.deltaTime;
             if (spawnRecipeTimer <= 0f) {
                 spawnRecipeTimer = spawnTime;
                 if (GameManager.Instance.IsGamePlaying() && waitingRecipeSOList.Count < maxRecipes) {
-                    RecipeSO waitingRecipeSO = listOfRecipeSO.recipeListSO[UnityEngine.Random.Range(0, listOfRecipeSO.recipeListSO.Count)];
-                    waitingRecipeSOList.Add(waitingRecipeSO);
+                    int waitingRecipeSOIndex = UnityEngine.Random.Range(0, listOfRecipeSO.recipeListSO.Count);
 
-                    OnRecipeSpawn?.Invoke(this, EventArgs.Empty);
+                    SpawnNewWaitingRecipeClientRPC(waitingRecipeSOIndex);
                 }
             }
         }
+    }
+
+    [ClientRpc]
+    private void SpawnNewWaitingRecipeClientRPC(int waitingRecipeSOIndex) {
+        RecipeSO waitingRecipeSO = listOfRecipeSO.recipeListSO[waitingRecipeSOIndex];
+        waitingRecipeSOList.Add(waitingRecipeSO);
+
+        OnRecipeSpawn?.Invoke(this, EventArgs.Empty);
     }
 
     public void DeliverRecipe(PlateKitchenObject plateKitchenObject) {
@@ -79,24 +89,39 @@ public class DeliveryManager : MonoBehaviour
                 }
                 if (plateContentsMatchesRecipe) {
                     //player deliver correct Recipe
-                    Debug.Log("player deliver correct Recipe");
-
-                    waitingRecipeSOList.RemoveAt(i);
-
-                    successfulRecipesAmount++;
-
-                    OnRecipeComplited?.Invoke(this, EventArgs.Empty);
-                    OnRecipeSuccess?.Invoke(this, EventArgs.Empty);
-                    
+                    DeliverCorrectRecipeServerRPC(i);
                     return;
                 }
             }
         }
         //not matches found 
+        DeliverIncorrectRecipeServerRPC();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void DeliverIncorrectRecipeServerRPC() => DeliverIncorrectRecipeClientRPC();
+
+    [ClientRpc]
+    private void DeliverIncorrectRecipeClientRPC() {
         OnRecipeFailed?.Invoke(this, EventArgs.Empty);
         Debug.Log("player deliver incorrect Recipe");
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    private void DeliverCorrectRecipeServerRPC(int waitingRecipeSOListIndex) => DeliverCorrectRecipeClientRPC(waitingRecipeSOListIndex);
+     
+
+    [ClientRpc]
+    private void DeliverCorrectRecipeClientRPC(int waitingRecipeSOListIndex) {
+        Debug.Log("player deliver correct Recipe");
+
+        waitingRecipeSOList.RemoveAt(waitingRecipeSOListIndex);
+
+        successfulRecipesAmount++;
+
+        OnRecipeComplited?.Invoke(this, EventArgs.Empty);
+        OnRecipeSuccess?.Invoke(this, EventArgs.Empty);
+    }
 
 
 
@@ -108,9 +133,9 @@ public class DeliveryManager : MonoBehaviour
 
     private IEnumerator RecipeSpawner() {
         while (true) {
-           
+
             while (waitingRecipeSOList.Count >= maxRecipes) {
-                yield return null; 
+                yield return null;
             }
 
             yield return new WaitForSeconds(spawnTime);
@@ -126,11 +151,11 @@ public class DeliveryManager : MonoBehaviour
     }
 
 
-    public List<RecipeSO> GetWaitingRecipeSOList() { 
+    public List<RecipeSO> GetWaitingRecipeSOList() {
         return waitingRecipeSOList;
     }
 
-    public int GetAmountOfSuccessRecepes() { 
+    public int GetAmountOfSuccessRecepes() {
         return successfulRecipesAmount;
     }
 }
