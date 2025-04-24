@@ -18,6 +18,10 @@ public class KitchenObject : NetworkBehaviour
         KitchenGameMultiplayer.Instance.SpawnKitchenObjectSO(kitchenObjectSO, kitchenObjectParrent);
     }
 
+    public static void DestroyKitchenObject(KitchenObject kitchenObject) {
+        KitchenGameMultiplayer.Instance.DestroyKitchenObject(kitchenObject);
+    }
+
     public KitchenObjectSO GetKitchenObjestSO() {
         return kitchenObjectSO;
     }
@@ -65,9 +69,8 @@ public class KitchenObject : NetworkBehaviour
         return kitchenObjectParent;
     }
 
-    public void DestroyObject() {
-        kitchenObjectParent.ClearKitchenObject();
+    public void DestroyObject() => Destroy(gameObject);
 
-        Destroy(gameObject);
-    }
+    public void ClearKitchenObjectOnParent() => kitchenObjectParent.ClearKitchenObject();
+
 }
