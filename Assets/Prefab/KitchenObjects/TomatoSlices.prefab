@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2583623178126060779}
   - component: {fileID: -545840151197220666}
+  - component: {fileID: -6403460428319746447}
+  - component: {fileID: 5631969035962006555}
   m_Layer: 0
   m_Name: TomatoSlices
   m_TagString: Untagged
@@ -46,6 +48,39 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   kitchenObjectSO: {fileID: 11400000, guid: 7505ca9d451e31e469fd1f48b0ebddfd, type: 2}
+--- !u!114 &-6403460428319746447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1197832030889116687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 3983594770
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+--- !u!114 &5631969035962006555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1197832030889116687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8144b82f7c7f1b4eb0cec3f8b326117, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &5777616606221575620
 PrefabInstance:
   m_ObjectHideFlags: 0

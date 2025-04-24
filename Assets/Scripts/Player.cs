@@ -173,4 +173,8 @@ public class Player : NetworkBehaviour, IKitchenObjectParrent
     public bool HasKitchenObject() {
         return kitchenObj != null;
     }
+
+    public NetworkObject GetNetworkObject() {
+        return NetworkObject;
+    }
 }

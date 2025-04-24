@@ -1,7 +1,8 @@
 using System;
+using Unity.Netcode;
 using UnityEngine;
 
-public class BaseCounter : MonoBehaviour, IKitchenObjectParrent
+public class BaseCounter : NetworkBehaviour, IKitchenObjectParrent
 {
     public static event EventHandler OnPlasedKitchenObject;
 
@@ -40,5 +41,9 @@ public class BaseCounter : MonoBehaviour, IKitchenObjectParrent
 
     public bool HasKitchenObject() {
         return kitchenObj != null;
+    }
+
+    public NetworkObject GetNetworkObject() {
+        return NetworkObject;
     }
 }
